@@ -1,6 +1,18 @@
 import praw
 from collections import Counter
-import sys
+import argparse
+
+# Parse parameters/arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("-d", "--debug", help="Add extra output to help debug a problem", action="store_true")
+parser.add_argument("username", help="The reddit username (without /u/)")
+parser.add_argument("-c", "--count", help="The number of comments to fetch", type=int)
+args = parser.parse_args()
+
+# Assign arguments to variables
+debug = True if args.debug else False
+username = args.username
+count = args.count
 
 
 
@@ -19,7 +31,7 @@ def breakdown_user_comments(username, thing_limit = 100):
             output.append(str(x.subreddit))
         cnt = Counter()
         for x in output:
-            cnt[x] +=1 
+            cnt[x] +=1
 
         return cnt
 
@@ -36,22 +48,14 @@ def breakdown_user_comments(username, thing_limit = 100):
     print "\nSummary for {}: \n".format(username)
     for row in output:
         print "".join(word.ljust(column_width) for word in row)
-#test
-#breakdown_user_comments('CATfixer', thing_limit = 100)
+
+
 def main():
-    if len(sys.argv) <2:
-        print 'Error: Must pass a username when running script'
-    elif len(sys.argv) == 2:
-       # print "History of {} for max 100 comments:\n".format(sys.argv[1])
-        breakdown_user_comments(sys.argv[1])
-
-    elif len(sys.argv) == 3:
-        #print "History of {} for last {} comments:\n".format(sys.argv[1], sys.argv[2])
-        breakdown_user_comments(sys.argv[1], int(sys.argv[2]))
+    # If a count is specified, use that, else use 100
+    if count is not None:
+        breakdown_user_comments(username, count)
     else:
-        print 'Error: too many arguments running with first 2...\n'
-        breakdown_user_comments(sys.argv[1], sys.argv[2])
-
+        breakdown_user_comments(username)
 
 
 if __name__== '__main__':
