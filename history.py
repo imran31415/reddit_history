@@ -1,5 +1,6 @@
-import praw
 from collections import Counter
+import sys
+import praw
 import argparse
 
 # Parse parameters/arguments
@@ -15,24 +16,30 @@ username = args.username
 count = args.count
 
 
-
 def breakdown_user_comments(username, thing_limit = 100):
-    user_agent = "breakdown of subreddit posts"
+    user_agent = "Breakdown of users comments by subreddit"
     r = praw.Reddit(user_agent=user_agent)
-
     user = r.get_redditor(username)
-
     c = user.get_comments(limit = thing_limit)
 
 
     def countit(comments):
         output = []
-        for x in comments:
-            output.append(str(x.subreddit))
+        try:
+            for x in comments:
+                output.append(str(x.subreddit))
+        except praw.errors.NotFound, e:
+            print "User not found, maybe deleted?"
+            sys.exit()
+        else:
+            raise e
+
         cnt = Counter()
         for x in output:
-            cnt[x] +=1
-
+            cnt[x] += 1
+        if debug:
+            print 'output:', output
+            print 'cnd:', cnt
         return cnt
 
     result = countit(c)
