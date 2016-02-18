@@ -16,11 +16,11 @@ username = args.username
 count = args.count
 
 
-def breakdown_user_comments(username, thing_limit = 100):
+def breakdown_user_comments(username, thing_limit=100):
     user_agent = "Breakdown of users comments by subreddit"
     r = praw.Reddit(user_agent=user_agent)
     user = r.get_redditor(username)
-    c = user.get_comments(limit = thing_limit)
+    c = user.get_comments(limit=thing_limit)
 
 
     def countit(comments):
@@ -28,33 +28,38 @@ def breakdown_user_comments(username, thing_limit = 100):
         try:
             for x in comments:
                 output.append(str(x.subreddit))
-        except praw.errors.NotFound, e:
-            print "User not found, maybe deleted?"
+        except praw.errors.NotFound:
+            print("User not found, maybe deleted?")
             sys.exit()
-        else:
-            raise e
+        except:
+            print("Unexpected error:", sys.exc_info()[0])
+            raise
+        if debug:
+            print('output:', output)
 
+        # Add up the number of posts in each subreddit
         cnt = Counter()
         for x in output:
             cnt[x] += 1
         if debug:
-            print 'output:', output
-            print 'cnd:', cnt
+            print('cnt:', cnt)
         return cnt
 
     result = countit(c)
     total = sum(result.values())
 
-    print 'Total comments analyzed: {}'.format(total)
+    print('Total comments analyzed: {}'.format(total))
     output = []
 
     percentage_breakdown = {k:(float(v)/float(total)) for k, v in result.items()}
+    if debug:
+        print("percentage_breakdown:", percentage_breakdown)
     for k,v in percentage_breakdown.items():
-        output.append(["{}: {}%".format(k, v*float(100)), "{}".format("|"*int(float(100)*float(v)))])
-    column_width = max([len(x[0]) for x in output]) +4
-    print "\nSummary for {}: \n".format(username)
+        output.append(["{}: {}%".format(k, v * float(100)), "{}".format("|" * int(float(100) * float(v)))])
+    column_width = max([len(x[0]) for x in output]) + 4
+    print("\nSummary for {}: \n".format(username))
     for row in output:
-        print "".join(word.ljust(column_width) for word in row)
+        print("".join(word.ljust(column_width) for word in row))
 
 
 def main():
