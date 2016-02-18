@@ -10,7 +10,8 @@ def breakdown_user_comments(username, thing_limit = 100):
 
     user = r.get_redditor(username)
 
-    c = user.get_comments(limit =thing_limit)
+    c = user.get_comments(limit = thing_limit)
+
 
     def countit(comments):
         output = []
@@ -24,6 +25,8 @@ def breakdown_user_comments(username, thing_limit = 100):
 
     result = countit(c)
     total = sum(result.values())
+
+    print 'Total comments analyzed: {}'.format(total)
     output = []
 
     percentage_breakdown = {k:(float(v)/float(total)) for k, v in result.items()}
@@ -39,11 +42,11 @@ def main():
     if len(sys.argv) <2:
         print 'Error: Must pass a username when running script'
     elif len(sys.argv) == 2:
-        print "History of {} for last 100 comments:\n".format(sys.argv[1])
+       # print "History of {} for max 100 comments:\n".format(sys.argv[1])
         breakdown_user_comments(sys.argv[1])
 
     elif len(sys.argv) == 3:
-        print "History of {} for last {} comments:\n".format(sys.argv[1], sys.argv[2])
+        #print "History of {} for last {} comments:\n".format(sys.argv[1], sys.argv[2])
         breakdown_user_comments(sys.argv[1], int(sys.argv[2]))
     else:
         print 'Error: too many arguments running with first 2...\n'
