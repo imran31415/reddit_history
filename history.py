@@ -2,6 +2,7 @@ from collections import Counter
 import sys
 import praw
 import argparse
+from getscreensize import get_terminal_size
 
 # Parse parameters/arguments
 parser = argparse.ArgumentParser()
@@ -20,8 +21,7 @@ def breakdown_user_comments(username, thing_limit=100):
     user_agent = "Breakdown of users comments by subreddit"
     r = praw.Reddit(user_agent=user_agent)
     user = r.get_redditor(username)
-    c = user.get_comments(limit=thing_limit)
-
+    comments = user.get_comments(limit=thing_limit)
 
     def countit(comments):
         output = []
@@ -45,21 +45,30 @@ def breakdown_user_comments(username, thing_limit=100):
             print('cnt:', cnt)
         return cnt
 
-    result = countit(c)
+    result = countit(comments)
     total = sum(result.values())
 
     print('Total comments analyzed: {}'.format(total))
     output = []
 
-    percentage_breakdown = {k:(float(v)/float(total)) for k, v in result.items()}
+    percentage_breakdown = {k:round((float(v)/float(total)), 2) for k, v in result.items()}
     if debug:
         print("percentage_breakdown:", percentage_breakdown)
+
+    max_subreddit_length = 0
     for k,v in percentage_breakdown.items():
-        output.append(["{}: {}%".format(k, v * float(100)), "{}".format("|" * int(float(100) * float(v)))])
-    column_width = max([len(x[0]) for x in output]) + 4
+        if len(k) > max_subreddit_length:
+            max_subreddit_length = len(k)
+        output.append(["{}: {}%".format(k, v * float(100)), v])
+    if debug:
+        print("max_subreddit_length", max_subreddit_length)
+        print("output:", output)
     print("\nSummary for {}: \n".format(username))
+    terminal_width = get_terminal_size()[0]
+    if debug:
+        print('terminal width:', terminal_width)
     for row in output:
-        print("".join(word.ljust(column_width) for word in row))
+        print(row[0].ljust(max_subreddit_length + 7) + ' ' + '|' * int((row[1] * (terminal_width - max_subreddit_length))))
 
 
 def main():
