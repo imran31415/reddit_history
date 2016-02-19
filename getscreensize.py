@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+
+##
+## Script credit: https://github.com/mkaz
+## Script link: https://github.com/mkaz/termgraph
+## Modified slightly by me to work with Python 3
+##
+
 import os
 import shlex
 import struct
