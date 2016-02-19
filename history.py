@@ -68,7 +68,7 @@ def breakdown_user_comments(username, thing_limit=100):
     if debug:
         print('terminal width:', terminal_width)
     for row in output:
-        print(row[0].ljust(max_subreddit_length + 7) + ' ' + '|' * int((row[1] * (terminal_width - (max_subreddit_length + 7)))))
+        print(row[0].ljust(max_subreddit_length + 7) + ' ' + '▀' * int((row[1] * (terminal_width - (max_subreddit_length + 7)))))
 
 
 def main():
