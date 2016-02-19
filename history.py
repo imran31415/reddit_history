@@ -51,7 +51,7 @@ def breakdown_user_comments(username, thing_limit=100):
     print('Total comments analyzed: {}'.format(total))
     output = []
 
-    percentage_breakdown = {k:round((float(v)/float(total)), 2) for k, v in result.items()}
+    percentage_breakdown = {k:round((float(v)/float(total)), 4) for k, v in result.items()}
     if debug:
         print("percentage_breakdown:", percentage_breakdown)
 
@@ -59,7 +59,7 @@ def breakdown_user_comments(username, thing_limit=100):
     for k,v in percentage_breakdown.items():
         if len(k) > max_subreddit_length:
             max_subreddit_length = len(k)
-        output.append(["{}: {}%".format(k, v * float(100)), v])
+        output.append(["{}: {}%".format(k, round(v * float(100), 2)), v])
     if debug:
         print("max_subreddit_length", max_subreddit_length)
         print("output:", output)
