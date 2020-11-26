@@ -1,5 +1,5 @@
 decorator==4.0.9
 praw==3.3.0
-requests==2.9.1
+requests==2.20.0
 six==1.10.0
 update-checker==0.11
